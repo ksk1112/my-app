@@ -1,0 +1,29 @@
+services:
+  # フロント (Next.js)
+  frontend:
+    image: node:20
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3001:3000"
+    # 超シンプル：依存関係を入れて、起動するだけ
+    command: sh -c "npm install && npm run dev"
+
+  # バックエンド (Node.js/Express/TS)
+  backend:
+    image: node:20
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    command: sh -c "npm init -y && npm i express axios cors tsx && npx tsx index.ts"
+
+  # 専門処理 (Go)
+  specialist:
+    image: golang:1.21
+    working_dir: /app
+    volumes:
+      - ./specialist:/app
+    command: go run main.go
