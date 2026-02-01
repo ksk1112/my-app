@@ -31,10 +31,12 @@ export default defineConfig({
   ],
 
   /* 2. ここが最重要：GitHub Actions上でアプリを自動起動させる設定 */
+/* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',        // テスト前に叩くコマンド
-    url: 'http://localhost:3001',   // ここにアクセスできるようになるまでテストを待機する
-    reuseExistingServer: !process.env.CI, // ローカル（手元）では二重起動しない
-    timeout: 120 * 1000,           // 起動に最大2分待つ
+    command: 'npm run dev',
+    url: 'http://localhost:3001',
+    // 💡 ここを true に変更。すでに 3001番で動いているなら、それをそのまま使う設定
+    reuseExistingServer: true,
+    timeout: 120 * 1000,
   },
 });
