@@ -8,35 +8,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Docker Composeで Go, Express, Next.js を全部立ち上げる
+      # 1. Docker Compose で全サービスを起動
       - name: Start services with Docker
         run: docker compose up -d
 
-      # 2. フロントエンドの依存関係を入れる
+      # 2. 依存関係のインストール (CIオプションを付けて権限問題を回避)
       - name: Install dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
 
-      # 3. Playwrightのブラウザを入れる
+      # 3. Playwright 専用ブラウザのインストール
       - name: Install Playwright Browsers
         run: |
           cd frontend
           npx playwright install --with-deps
 
-      # 4. アプリが完全に起動するまで少し待つ（念のため）
+      # 4. バックエンドの起動を少し待つ
       - name: Wait for services
         run: sleep 20
 
-      # 5. テスト実行！
+      # 5. テスト実行
       - name: Run Playwright tests
         run: |
           cd frontend
           npx playwright test
-
-      # 失敗時にレポートを保存
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-report
-          path: frontend/playwright-report/
