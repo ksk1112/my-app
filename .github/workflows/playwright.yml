@@ -8,25 +8,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 1. Docker Compose で全サービスを起動
       - name: Start services with Docker
         run: docker compose up -d
 
+      # 2. 権限の強制リセット（これが重要）
+      - name: Fix permissions
+        run: sudo chown -R $USER:$USER .
+
+      # 3. 依存関係のインストール
       - name: Install dependencies
         run: |
           cd frontend
-          # キャッシュ由来の権限エラーを避ける設定
-          npm config set user 0
-          npm config set unsafe-perm true
-          npm install
+          npm install --no-audit --no-fund
 
+      # 4. Playwright 専用ブラウザのインストール
       - name: Install Playwright Browsers
         run: |
           cd frontend
           npx playwright install --with-deps
 
+      # 5. バックエンドの起動を待機
       - name: Wait for services
         run: sleep 30
 
+      # 6. テスト実行
       - name: Run Playwright tests
         run: |
           cd frontend
