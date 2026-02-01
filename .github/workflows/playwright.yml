@@ -14,9 +14,10 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend
-          # 既存の node_modules を強制削除し、sudo を使ってインストール
-          rm -rf node_modules
-          sudo npm install --unsafe-perm=true
+          # キャッシュ由来の権限エラーを避ける設定
+          npm config set user 0
+          npm config set unsafe-perm true
+          npm install
 
       - name: Install Playwright Browsers
         run: |
